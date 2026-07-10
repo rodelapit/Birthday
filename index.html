@@ -236,6 +236,9 @@
   }
 
   .stage-note{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
     align-items:flex-start;
     justify-content:flex-start;
     padding: 0;
@@ -386,81 +389,84 @@
   }
 
   .final-copy{
-    position:absolute;
-    left:0;
-    bottom:26px;
-    right:0;
-    padding: 0 20px;
+    position:relative;
+    left:auto;
+    bottom:auto;
+    right:auto;
+    width:100%;
+    max-width: 360px;
+    padding: 0 18px 22px;
+    text-align:center;
   }
 
   @media (max-width: 480px){
     .sticker-collage{
-      width:min(220px, 78vw);
-      height: 176px;
-      margin: 76px auto 0;
+      width:min(200px, 74vw);
+      height: 158px;
+      margin: 58px auto 0;
     }
 
     .sticker-collage .portrait{
-      width:102px;
-      height:112px;
-      top:18px;
+      width:92px;
+      height:102px;
+      top:16px;
     }
 
     .sticker-collage .hat{
-      width:74px;
+      width:68px;
     }
 
     .sticker-collage .cake{
-      left:14px;
-      bottom:10px;
-      width:66px;
+      left:12px;
+      bottom:8px;
+      width:58px;
     }
 
     .sticker-collage .star-left{
-      left:8px;
-      top:26px;
-      width:30px;
-    }
-
-    .sticker-collage .star-right{
-      right:10px;
-      top:30px;
-      width:30px;
-    }
-
-    .sticker-collage .spark{
-      right:24px;
-      top:2px;
+      left:6px;
+      top:22px;
       width:26px;
     }
 
-    .sticker-collage .heart-left{
-      left:58px;
-      top:96px;
+    .sticker-collage .star-right{
+      right:8px;
+      top:24px;
+      width:26px;
+    }
+
+    .sticker-collage .spark{
+      right:20px;
+      top:0;
       width:22px;
+    }
+
+    .sticker-collage .heart-left{
+      left:50px;
+      top:84px;
+      width:20px;
     }
 
     .sticker-collage .heart-right{
-      right:60px;
-      top:96px;
-      width:22px;
+      right:52px;
+      top:84px;
+      width:20px;
     }
 
     .final-copy{
-      bottom:18px;
-      padding: 0 16px;
+      max-width: 100%;
+      padding: 0 16px 18px;
     }
 
     .note-title{
-      font-size: clamp(1.45rem, 5vw, 1.8rem);
-      margin: 8px 0 8px;
+      font-size: clamp(1.28rem, 4.8vw, 1.55rem);
+      margin: 4px 0 8px;
     }
 
     .letter{
       max-width: 100%;
       margin: 0 auto;
-      font-size: clamp(0.98rem, 3.6vw, 1.12rem);
-      line-height:1.36;
+      font-size: clamp(0.9rem, 3.2vw, 1.02rem);
+      line-height:1.32;
     }
   }
 
