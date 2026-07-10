@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Happy Birthday, Lele</title>
+<meta name="description" content="A simple birthday surprise page." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#111111;
+    --paper:#f1eee8;
+    --red:#ef2f36;
+    --ink:#1a1424;
+    --white:#ffffff;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background: #f1eee8;
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    overflow-x:hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  button{
+    font: inherit;
+  }
+
+  .screen{
+    min-height:100svh;
+    display:grid;
+    place-items:center;
+    padding: 0;
+  }
+
+  .window{
+    width:100vw;
+    min-height:100svh;
+    background:var(--paper);
+    border-radius:0;
+    overflow:hidden;
+    box-shadow:none;
+  }
+
+  .topbar{
+    height:44px;
+    background:#0f0f10;
+    color:rgba(255,255,255,.82);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:0 12px;
+    font-size:11px;
+    letter-spacing:.02em;
+    -webkit-user-select:none;
+    user-select:none;
+  }
+
+  .topbar .center{
+    opacity:.8;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    flex:1;
+    text-align:center;
+  }
+
+  .stage{
+    min-height:calc(100svh - 44px);
+    display:none;
+    position:relative;
+  }
+
+  .stage.is-active{ display:flex; }
+
+  .stage-open{
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    background:var(--paper);
+    color:#101010;
+    padding: 28px 18px 34px;
+  }
+
+  .open-copy{
+    font-family:'Patrick Hand', cursive;
+    font-size: clamp(2rem, 6vw, 2.6rem);
+    margin: 0 0 26px;
+    letter-spacing:.01em;
+  }
+
+  .envelope-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:22px;
+    cursor:pointer;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .envelope{
+    width:min(180px, 54vw);
+    aspect-ratio: 1.28 / 1;
+    background: linear-gradient(145deg, #ff8190, #ff637a);
+    border-radius:12px;
+    position:relative;
+    box-shadow:0 10px 18px rgba(0,0,0,.15);
+  }
+
+  .envelope::before,
+  .envelope::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:12px;
+  }
+
+  .envelope::before{
+    background:
+      linear-gradient(135deg, transparent 49%, rgba(255,255,255,.18) 49% 50%, transparent 50%),
+      linear-gradient(225deg, transparent 49%, rgba(255,255,255,.16) 49% 50%, transparent 50%);
+  }
+
+  .flap{
+    position:absolute;
+    inset:0;
+    border-radius:12px;
+    clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+    background: linear-gradient(180deg, rgba(255,255,255,.28), transparent 35%);
+  }
+
+  .note-card{
+    position:absolute;
+    inset: 24% 14% 18%;
+    background:rgba(255,255,255,.95);
+    border-radius:10px;
+    box-shadow:0 8px 16px rgba(0,0,0,.08);
+  }
+
+  .note-card::before,
+  .note-card::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    width:70%;
+    height:6px;
+    border-radius:999px;
+    background:rgba(255,96,111,.88);
+    transform:translateX(-50%);
+  }
+
+  .note-card::before{ top:34%; }
+  .note-card::after{ top:58%; width:56%; }
+
+  .open-hint{
+    font-family:'Patrick Hand', cursive;
+    font-size: clamp(1.8rem, 5vw, 2.3rem);
+  }
+
+  .stage-message{
+    align-items:center;
+    justify-content:center;
+    padding: 16px;
+    background: linear-gradient(180deg, #f1eee8 0%, #efe9e1 100%);
+  }
+
+  .message-card{
+    width:min(100%, 680px);
+    min-height: 56vh;
+    background: var(--red);
+    color: rgba(255,255,255,.94);
+    border-radius: 18px;
+    box-shadow:0 14px 28px rgba(0,0,0,.18);
+    padding: 22px 20px 18px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    transform:rotate(-0.45deg);
+  }
+
+  .message-head{
+    font-family:'Patrick Hand', cursive;
+    font-size: 1.45rem;
+    line-height:1.05;
+    margin-bottom: 14px;
+  }
+
+  .message-grid{
+    font-family:'Patrick Hand', cursive;
+    display:grid;
+    grid-template-columns: auto 1fr;
+    gap: 3px 12px;
+    font-size: 1.22rem;
+    line-height:1.15;
+    margin-bottom: 20px;
+  }
+
+  .message-grid .label{
+    opacity:.75;
+  }
+
+  .message-line{
+    font-family:'Patrick Hand', cursive;
+    font-size: clamp(1.28rem, 4vw, 1.55rem);
+    line-height:1.25;
+    margin-top: 8px;
+  }
+
+  .attachment-link,
+  .back-link{
+    align-self:center;
+    background:none;
+    border:none;
+    color:rgba(255,255,255,.88);
+    font-family:'Patrick Hand', cursive;
+    font-size: 1.08rem;
+    padding:0;
+    cursor:pointer;
+    text-decoration:none;
+  }
+
+  .attachment-link span,
+  .back-link span{
+    border-bottom:1px solid rgba(255,255,255,.8);
+    padding-bottom:1px;
+  }
+
+  .stage-note{
+    align-items:flex-start;
+    justify-content:flex-start;
+    padding: 0;
+    background: var(--red);
+    color:#fff;
+  }
+
+  .note-illustration{
+    width:min(280px, 68vw);
+    margin: 86px auto 8px;
+    display:block;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,.15));
+  }
+
+  .note-title{
+    font-family:'Patrick Hand', cursive;
+    font-size: clamp(1.6rem, 5.2vw, 2.1rem);
+    margin: 10px 0 10px;
+    text-align:center;
+  }
+
+  .letter{
+    font-family:'Patrick Hand', cursive;
+    font-size: clamp(1.02rem, 3.8vw, 1.22rem);
+    line-height:1.42;
+    white-space:pre-line;
+    max-width: 92%;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .signature{
+    margin-top: 16px;
+    font-family:'Patrick Hand', cursive;
+    font-size:1.2rem;
+    opacity:.9;
+    text-align:center;
+  }
+
+  .bunting{
+    position:absolute;
+    top:44px;
+    left:0;
+    width:100%;
+    height:36px;
+    pointer-events:none;
+    display:flex;
+    gap:0;
+    overflow:hidden;
+  }
+
+  .bunting span{
+    width:12.5%;
+    height:100%;
+    position:relative;
+  }
+
+  .bunting span::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:0;
+    height:0;
+    border-left:14px solid transparent;
+    border-right:14px solid transparent;
+    border-top:18px solid rgba(255,255,255,.9);
+  }
+
+  .bunting span:nth-child(3n)::before{ border-top-color:#54c1c9; }
+  .bunting span:nth-child(4n)::before{ border-top-color:#ff7d7d; }
+  .bunting span:nth-child(5n)::before{ border-top-color:#f6d27a; }
+
+  .sticker-collage{
+    position:relative;
+    width:min(260px, 70vw);
+    margin: 94px auto 10px;
+    height: 210px;
+  }
+
+  .sticker-collage .sticker{
+    position:absolute;
+    display:block;
+    filter: drop-shadow(0 4px 0 rgba(0,0,0,.12));
+  }
+
+  .sticker-collage .portrait{
+    left:50%;
+    top:20px;
+    width:118px;
+    height:130px;
+    transform:translateX(-50%);
+    z-index:2;
+    object-fit:cover;
+    object-position:center center;
+    border-radius:8px;
+    background:#fff;
+  }
+
+  .sticker-collage .hat{
+    left:50%;
+    top:0;
+    width:86px;
+    transform:translateX(-50%) rotate(-8deg);
+    z-index:3;
+  }
+
+  .sticker-collage .cake{
+    left:20px;
+    bottom:12px;
+    width:80px;
+    transform:rotate(-6deg);
+    z-index:1;
+  }
+
+  .sticker-collage .star-left{
+    left:14px;
+    top:36px;
+    width:34px;
+    transform:rotate(-10deg);
+  }
+
+  .sticker-collage .star-right{
+    right:18px;
+    top:44px;
+    width:34px;
+    transform:rotate(12deg);
+  }
+
+  .sticker-collage .spark{
+    right:36px;
+    top:6px;
+    width:30px;
+    transform:rotate(10deg);
+  }
+
+  .sticker-collage .heart-left{
+    left:72px;
+    top:118px;
+    width:26px;
+  }
+
+  .sticker-collage .heart-right{
+    right:74px;
+    top:118px;
+    width:26px;
+  }
+
+  .final-copy{
+    position:absolute;
+    left:0;
+    bottom:26px;
+    right:0;
+    padding: 0 20px;
+  }
+
+  @media (min-width: 768px){
+    .message-card{ width:min(100%, 700px); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+  <main class="screen">
+    <section class="window" aria-label="birthday reveal page">
+      <div class="topbar" aria-hidden="true">
+        <span>Messenger 7:03 PM Mon Mar 16</span>
+        <span class="center">digitalsunlit.my.canva.site</span>
+        <span>↻</span>
+      </div>
+
+      <section class="stage stage-open is-active" id="stage1">
+        <div>
+          <div class="open-copy">hey!</div>
+          <div class="envelope-wrap" id="openMail" role="button" tabindex="0" aria-label="open mail">
+            <div class="envelope">
+              <div class="flap"></div>
+              <div class="note-card"></div>
+            </div>
+            <div class="open-hint">you've got new emails</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stage stage-message" id="stage2">
+        <div class="message-card">
+          <div>
+            <div class="message-head">From:</div>
+            <div class="message-grid">
+              <div class="label">To:</div><div>Lele</div>
+              <div class="label">Message:</div><div>Check out this awesome surprises for YOU!</div>
+            </div>
+            <div class="message-line">Happy Birthday, Lele. I made this just for you.</div>
+          </div>
+          <button class="attachment-link" id="viewAttachment" type="button"><span>see attachment</span></button>
+        </div>
+      </section>
+
+      <section class="stage stage-note" id="stage3">
+        <div class="bunting" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="sticker-collage" aria-hidden="true">
+          <img class="sticker portrait" src="lele.jpg.jpg" alt="Lele portrait" />
+
+          <svg class="sticker hat" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 8 L84 64 H16 Z" fill="#f8e55e" stroke="#ffffff" stroke-width="4"/>
+            <text x="30" y="38" font-size="14" font-family="Arial, sans-serif" fill="#1b1b1b" font-weight="700">HAPPY</text>
+            <text x="31" y="50" font-size="12" font-family="Arial, sans-serif" fill="#1b1b1b" font-weight="700">BIRTHDAY</text>
+          </svg>
+
+          <svg class="sticker cake" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+            <rect x="18" y="36" width="52" height="32" rx="8" fill="#ffffff" stroke="#ffd55b" stroke-width="4"/>
+            <path d="M18 40 Q28 30 38 40 Q48 30 58 40 Q68 30 70 40" fill="none" stroke="#ffd55b" stroke-width="4"/>
+            <rect x="38" y="14" width="6" height="22" rx="3" fill="#ffffff"/>
+            <path d="M41 10 C36 14 36 20 41 23 C46 20 46 14 41 10 Z" fill="#ffcf44"/>
+            <ellipse cx="44" cy="80" rx="24" ry="6" fill="rgba(0,0,0,.12)"/>
+          </svg>
+
+          <svg class="sticker star-left" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M20 2 25 14 38 15 28 24 31 37 20 30 9 37 12 24 2 15 15 14Z" fill="#2b5cff" stroke="#fff" stroke-width="3"/></svg>
+          <svg class="sticker star-right" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M20 2 25 14 38 15 28 24 31 37 20 30 9 37 12 24 2 15 15 14Z" fill="#ff7aa7" stroke="#fff" stroke-width="3"/></svg>
+          <svg class="sticker spark" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><path d="M18 2 22 14 34 18 22 22 18 34 14 22 2 18 14 14Z" fill="#ffffff" stroke="#ff7aa7" stroke-width="2"/></svg>
+          <svg class="sticker heart-left" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><path d="M14 25 3 14C0 10 1 5 5 3c3-2 6-1 9 2 3-3 6-4 9-2 4 2 5 7 2 11Z" fill="#2f6fff"/></svg>
+          <svg class="sticker heart-right" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><path d="M14 25 3 14C0 10 1 5 5 3c3-2 6-1 9 2 3-3 6-4 9-2 4 2 5 7 2 11Z" fill="#2f6fff"/></svg>
+        </div>
+
+        <div class="final-copy">
+          <div class="note-title">Happy Birthday, Lele</div>
+            <div class="letter">Happy Birthday, Lele!
+
+        I'm really grateful that I met you. Through calls and chats ra ta nagkaila, but despite that, I can honestly say that you have a genuine heart. I truly cherish the time nga sige ta'g istorya until now.
+
+        I hope you'll really enjoy your birthday this year, unlike the past few years. You deserve to be genuinely happy and surrounded by people who appreciate you.
+
+        I wish you nothing but the best, Lele... Andy... or Andrea—unsa ba gyud? Daghan kaayo kag nicknames! HAHAHA. Basta, happy birthday! Stay kind, stay genuine, and keep being the amazing person that you are.
+
+        Diri lang sa ko mo-greet nimo kay gi-gamit pa ang pagka-IT. 😂 Happy Birthday once again! Enjoy your special day! 🎉🎂💖</div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const stage1 = document.getElementById('stage1');
+    const stage2 = document.getElementById('stage2');
+    const stage3 = document.getElementById('stage3');
+    const openMail = document.getElementById('openMail');
+    const viewAttachment = document.getElementById('viewAttachment');
+
+    function showStage(stage){
+      [stage1, stage2, stage3].forEach((panel) => panel.classList.remove('is-active'));
+      stage.classList.add('is-active');
+    }
+
+    function reveal(stage){
+      showStage(stage);
+    }
+
+    openMail.addEventListener('click', () => reveal(stage2));
+    openMail.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        reveal(stage2);
+      }
+    });
+
+    viewAttachment.addEventListener('click', () => reveal(stage3));
+  </script>
+</body>
+</html>
